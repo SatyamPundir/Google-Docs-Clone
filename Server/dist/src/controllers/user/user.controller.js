@@ -18,6 +18,7 @@ const catch_async_1 = __importDefault(require("../../middleware/catch-async"));
 const user_services_1 = require("../../services/user.services");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const responses_1 = require("../../responses");
+const env_config_1 = __importDefault(require("../../config/env.config"));
 class UserController {
     constructor() {
         this.register = (0, catch_async_1.default)((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -26,6 +27,8 @@ class UserController {
                 return res.status(400).json(err);
             }
             const { email, password1 } = req.body;
+            if (yield user_services_1.userService.findUserByEmail(email))
+                return res.sendStatus(409); // if user already exists then through this error.
             yield user_services_1.userService.createUser(email, password1);
             return res.sendStatus(200);
         }));
@@ -39,7 +42,7 @@ class UserController {
         // code for veriying the email:
         this.verifyEmail = (0, catch_async_1.default)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const verificationToken = req.params.token;
-            jsonwebtoken_1.default.verify(verificationToken, "verify_email", (err, decoded) => __awaiter(this, void 0, void 0, function* () {
+            jsonwebtoken_1.default.verify(verificationToken, env_config_1.default.VERIFY_EMAIL_SECRET, (err, decoded) => __awaiter(this, void 0, void 0, function* () {
                 if (err)
                     return res.sendStatus(403);
                 try {

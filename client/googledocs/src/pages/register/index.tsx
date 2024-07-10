@@ -70,7 +70,16 @@ const Register = () => {
       });
       navigate("/login");
     } catch (err) {
-      if (axios.isAxiosError(err)) {
+      
+      if(err.response.status === 409)
+      {
+        addToast({
+          title: `User Already exists with this ${email}!`,
+          body: "Please use another email",
+          color: "warning",
+        });
+      }
+      else if(axios.isAxiosError(err)) {
         const { response } = err as AxiosError;
         const errors = (response as any).data.errors;
         const emailFieldErrors = errors

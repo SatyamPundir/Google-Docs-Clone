@@ -18,6 +18,7 @@ const user_model_1 = require("../db/models/user.model");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const refresh_token_model_1 = require("../db/models/refresh-token.model");
 const mail_service_1 = require("./mail.service");
+const env_config_1 = __importDefault(require("../config/env.config"));
 class UserService {
     constructor() {
         // cheks if user exists already
@@ -27,9 +28,13 @@ class UserService {
         });
         // creates a new User and hashes password and creates a JWT token
         this.createUser = (email, password) => __awaiter(this, void 0, void 0, function* () {
+            if (yield this.findUserByEmail(email)) {
+                console.log("Already exists!");
+                return;
+            }
             const salt = yield (0, bcrypt_1.genSalt)();
             const hashedPassword = yield (0, bcrypt_1.hash)(password, salt);
-            const verificationToken = jsonwebtoken_1.default.sign({ email }, "verify_email");
+            const verificationToken = jsonwebtoken_1.default.sign({ email }, env_config_1.default.VERIFY_EMAIL_SECRET);
             const user = yield user_model_1.User.create({
                 email: email,
                 password: hashedPassword,
@@ -74,10 +79,10 @@ class UserService {
         });
         this.generateAuthResponse = (user) => __awaiter(this, void 0, void 0, function* () {
             const requestUser = yield this.getRequestUser(user);
-            const accessToken = jsonwebtoken_1.default.sign(requestUser, "access_token", {
+            const accessToken = jsonwebtoken_1.default.sign(requestUser, env_config_1.default.ACCESS_TOKEN_SECRET, {
                 expiresIn: '24h'
             });
-            const refreshToken = jsonwebtoken_1.default.sign(requestUser, "refresh_token", {
+            const refreshToken = jsonwebtoken_1.default.sign(requestUser, env_config_1.default.REFRESH_TOKEN_SECRET, {
                 expiresIn: '24h'
             });
             yield refresh_token_model_1.RefreshToken.destroy({

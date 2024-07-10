@@ -18,6 +18,7 @@ const socket_io_1 = require("socket.io");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const document_service_1 = __importDefault(require("./services/document.service"));
 const socket_events_enum_1 = __importDefault(require("./types/enums/socket-events-enum"));
+const env_config_1 = __importDefault(require("./config/env.config"));
 const port = 8080;
 const server = http_1.default.createServer(index_1.default);
 const io = new socket_io_1.Server(server, {
@@ -35,7 +36,7 @@ io.on("connection", (socket) => {
     if (!accessToken || !documentId)
         return socket.disconnect();
     else {
-        jsonwebtoken_1.default.verify(accessToken, "access_token", (err, decoded) => {
+        jsonwebtoken_1.default.verify(accessToken, env_config_1.default.ACCESS_TOKEN_SECRET, (err, decoded) => {
             const { id, email } = decoded;
             socket.username = email;
             document_service_1.default

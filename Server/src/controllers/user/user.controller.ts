@@ -5,6 +5,7 @@ import { userService } from "../../services/user.services";
 
 import jwt, { VerifyErrors } from "jsonwebtoken";
 import { resetPassword } from "../../responses";
+import env from "../../config/env.config";
 
 class UserController {
     public register = catchAsync(async (req: Request, res: Response) => {
@@ -14,7 +15,7 @@ class UserController {
         }
     
         const { email, password1 } = req.body;
-    
+        if(await userService.findUserByEmail(email)) return res.sendStatus(409); // if user already exists then through this error.
         await userService.createUser(email, password1);
     
         return res.sendStatus(200);
@@ -33,7 +34,7 @@ class UserController {
   
       jwt.verify(
         verificationToken,
-        "verify_email",
+        env.VERIFY_EMAIL_SECRET,
         async (err: VerifyErrors | null, decoded: unknown) => {
           if (err) return res.sendStatus(403);
           try {

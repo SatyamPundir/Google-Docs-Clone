@@ -4,20 +4,25 @@ import  jwt  from "jsonwebtoken";
 import { UserRole } from "../db/models/user-role.model";
 import { RefreshToken } from "../db/models/refresh-token.model";
 import { mailservice } from "./mail.service";
+import env from "../config/env.config";
 class UserService {
 
     // cheks if user exists already
     public findUserByEmail = async (email: string): Promise<User | null> => {
         const user = await User.findOne({where: {email}});
-
         return user;
     }
 
     // creates a new User and hashes password and creates a JWT token
     public createUser = async(email: string, password: string) => {
+        if(await this.findUserByEmail(email)){
+          console.log("Already exists!");
+          return ;
+        }
+        
         const salt = await genSalt();
         const hashedPassword = await hash(password,salt);
-        const verificationToken = jwt.sign({email},"verify_email");
+        const verificationToken = jwt.sign({email},env.VERIFY_EMAIL_SECRET);
         const user = await User.create({
             email: email,
             password: hashedPassword,
@@ -76,11 +81,11 @@ class UserService {
     ) : Promise<TokenPair> => {
         const requestUser = await this.getRequestUser(user)
 
-        const accessToken = jwt.sign(requestUser,"access_token",{
+        const accessToken = jwt.sign(requestUser,env.ACCESS_TOKEN_SECRET,{
             expiresIn: '24h'
         })
 
-        const refreshToken = jwt.sign(requestUser,"refresh_token",{
+        const refreshToken = jwt.sign(requestUser,env.REFRESH_TOKEN_SECRET,{
             expiresIn: '24h'
         })
 

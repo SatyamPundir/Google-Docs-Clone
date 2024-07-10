@@ -86,7 +86,7 @@ const DocumentMenuBar = () => {
             id=""
             placeholder="Untitled Document"
           />
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <button className="text-sm whitespace-nowrap px-2 py-1 font-medium hover:bg-gray-100 rounded-md">
               File
             </button>
@@ -112,7 +112,7 @@ const DocumentMenuBar = () => {
               Help
             </button>
             {saving && <p className="text-sm text-gray-500 px-2">Saving...</p>}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="flex items-center flex-shrink-0 pl-3 gap-x-4">

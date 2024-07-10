@@ -3,16 +3,19 @@ import jwt, { VerifyErrors } from "jsonwebtoken";
 import RoleEnum from "../types/enums/role-enum";
 import { UserRole } from "../db/models/user-role.model";
 import { Role } from "../db/models/role.model";
+import env from "../config/env.config";
 
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers["authorization"];
 
   const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.sendStatus(401);
+  if (!token) {
+    return res.status(403).send('A token is required for authentication');
+  }
 
   jwt.verify(
     token,
-    "access_token",
+    env.ACCESS_TOKEN_SECRET,
     (err: VerifyErrors | null, decoded: unknown) => {
       if (err) return res.sendStatus(403);
       try {

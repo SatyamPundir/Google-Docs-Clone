@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import jwt, { VerifyErrors } from "jsonwebtoken";
 import documentService from "./services/document.service";
 import SocketEvent from "./types/enums/socket-events-enum";
+import env from "./config/env.config";
 
 const port = 8080;
 
@@ -28,7 +29,7 @@ io.on("connection", (socket) => {
   else {
     jwt.verify(
       accessToken,
-      "access_token",
+      env.ACCESS_TOKEN_SECRET,
       (err: VerifyErrors | null, decoded: unknown) => {
         const { id, email } = decoded as RequestUser;
         (socket as any).username = email;

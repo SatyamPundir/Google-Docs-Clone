@@ -4,6 +4,7 @@ import catchAsync from "../../middleware/catch-async";
 import { userService } from "../../services/user.services";
 import { emailNotVerified, userNotFound } from "../../responses";
 import jwt, { VerifyErrors } from 'jsonwebtoken';
+import env from "../../config/env.config";
 
 class Authcontroller {
     public login = catchAsync(async (req: Request, res: Response) => {
@@ -39,7 +40,7 @@ class Authcontroller {
         if(!isTokenActive) return res.sendStatus(403);
         jwt.verify(
             refreshToken,
-            "refresh_token",
+            env.REFRESH_TOKEN_SECRET,
             async(error: VerifyErrors | null, decoded: unknown) =>{
                 if(error) return res.sendStatus(403)
                 try{

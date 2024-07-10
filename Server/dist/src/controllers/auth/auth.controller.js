@@ -18,6 +18,7 @@ const catch_async_1 = __importDefault(require("../../middleware/catch-async"));
 const user_services_1 = require("../../services/user.services");
 const responses_1 = require("../../responses");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const env_config_1 = __importDefault(require("../../config/env.config"));
 class Authcontroller {
     constructor() {
         this.login = (0, catch_async_1.default)((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -46,7 +47,7 @@ class Authcontroller {
             const isTokenActive = yield user_services_1.userService.getIsTokenActive(refreshToken);
             if (!isTokenActive)
                 return res.sendStatus(403);
-            jsonwebtoken_1.default.verify(refreshToken, "refresh_token", (error, decoded) => __awaiter(this, void 0, void 0, function* () {
+            jsonwebtoken_1.default.verify(refreshToken, env_config_1.default.REFRESH_TOKEN_SECRET, (error, decoded) => __awaiter(this, void 0, void 0, function* () {
                 if (error)
                     return res.sendStatus(403);
                 try {

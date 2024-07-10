@@ -16,12 +16,14 @@ exports.authorize = exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_role_model_1 = require("../db/models/user-role.model");
 const role_model_1 = require("../db/models/role.model");
+const env_config_1 = __importDefault(require("../config/env.config"));
 const authenticate = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    if (!token)
-        return res.sendStatus(401);
-    jsonwebtoken_1.default.verify(token, "access_token", (err, decoded) => {
+    if (!token) {
+        return res.status(403).send('A token is required for authentication');
+    }
+    jsonwebtoken_1.default.verify(token, env_config_1.default.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err)
             return res.sendStatus(403);
         try {

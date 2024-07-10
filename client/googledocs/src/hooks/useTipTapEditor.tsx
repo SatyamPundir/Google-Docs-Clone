@@ -15,7 +15,7 @@ const useTipTapEditor = (initialContent: string, handleEditorChange: (editor: Ed
     },
     onUpdate: ({ editor }) => {
       const updatedContent = editor.getHTML();
-      console.log('Updated Content:', updatedContent);
+      // console.log('Updated Content:', updatedContent);
       
       handleEditorChange(editor as Editor);
     },

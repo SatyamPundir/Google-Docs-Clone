@@ -15,7 +15,7 @@ const AuthService = {
     return API.post("auth/refresh-token", payload);
   },
   logout: (accessToken: string) => {
-    return API.delete("auth/logiut", {
+    return API.delete("auth/logout", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
   },
