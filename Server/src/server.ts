@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://frontend-one-mocha.vercel.app", // Replace with your frontend URL
     methods: "*",
   },
 });
@@ -31,6 +31,8 @@ io.on("connection", (socket) => {
       accessToken,
       env.ACCESS_TOKEN_SECRET,
       (err: VerifyErrors | null, decoded: unknown) => {
+        if (err) return socket.disconnect();
+
         const { id, email } = decoded as RequestUser;
         (socket as any).username = email;
 
@@ -58,7 +60,6 @@ io.on("connection", (socket) => {
 
             socket.on("disconnect", async () => {
               socket.leave(documentId);
-              socket.disconnect();
               io.in(documentId)
                 .fetchSockets()
                 .then((clients) => {
