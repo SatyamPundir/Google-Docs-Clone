@@ -1,5 +1,5 @@
-import express , {Express, Request,Response} from 'express'
-import dotenv from "dotenv"
+import express, { Express } from 'express';
+import dotenv from 'dotenv';
 import db from './db/models';
 import router from './routes';
 import cors from 'cors';
@@ -9,25 +9,26 @@ dotenv.config();
 
 const app: Express = express();
 app.use(express.json());
+
+// CORS configuration
 app.use(
   cors({
-    origin: "*",
+    origin: "https://frontend-one-mocha.vercel.app", // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"], // Add the HTTP methods you expect
+    allowedHeaders: ["Content-Type", "Authorization"], // Add the headers you expect
+    credentials: true, // If you need to allow credentials
   })
 );
 
-const port:number = 8080;
+// Handle preflight requests
+app.options('*', cors());
 
-app.use(express.json());
+const port: number = 8080;
+
 app.use(router);
 app.use(errorHandler);
+
 db.sequelize.sync();
 
-// app.get("/", (req:Request, res:Response) => {
-//     res.send("Express + TypeScript server111");
-// })
-
-// app.listen(port,()=>{
-//     console.log(`Server is running on port no: ${port}`);
-// })
-
+// Exporting the app for server.ts
 export default app;
